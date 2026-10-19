@@ -1,122 +1,69 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+// src/App.jsx
+import { useState } from 'react';
+import './App.css';
+import { SitesList } from './components/SiteList';
+import { SiteDetail } from './components/SiteDetails';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentView, setCurrentView] = useState('list'); // 'list' o 'detail'
+  const [selectedSiteId, setSelectedSiteId] = useState(null);
+
+  // Ir al detalle de un centro específico
+  const handleSelectSite = (siteId) => {
+    if (!siteId) return;
+
+    setSelectedSiteId(siteId);
+    setCurrentView('detail');
+  };
+
+  // Volver al listado principal
+  const handleBackToList = () => {
+    setSelectedSiteId(null);
+    setCurrentView('list');
+  };
+
+  // Acción provisional para cuando selecciones un sensor
+  const handleSelectSensor = (sensorId) => {
+    if (!sensorId) return;
+    alert(`Aquí navegarás al detalle/gráfico del sensor con ID: ${sensorId}`);
+  };
+
+  const isDetailView = currentView === 'detail' && selectedSiteId !== null;
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-gray-50 text-gray-800">
+      {/* Cabecera de la aplicación */}
+      <header className="bg-white border-b shadow-sm py-4 px-6 mb-6 flex justify-between items-center">
+        <h1 className="text-xl font-bold text-blue-600 cursor-pointer" onClick={handleBackToList}>
+          Monitoreo de Centros de Cultivo
+        </h1>
+        {isDetailView && (
+          <button
+            type="button"
+            onClick={handleBackToList}
+            className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded transition"
+          >
+            ← Volver a Centros
+          </button>
+        )}
+      </header>
 
-      <div className="ticks"></div>
+      {/* Contenido principal según la vista activa */}
+      <main className="max-w-7xl mx-auto px-4 pb-12">
+        {currentView === 'list' && (
+          <SitesList onSelectSite={handleSelectSite} />
+        )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {isDetailView && (
+          <SiteDetail
+            siteId={selectedSiteId}
+            onBack={handleBackToList}
+            onSelectSensor={handleSelectSensor}
+          />
+        )}
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
